@@ -4,6 +4,9 @@
 >
 > _A mirror, not a map._
 
+Status: Draft
+Last Reviewed: 2026-07-12
+
 ---
 
 # Why I'm Building Edgebook AI

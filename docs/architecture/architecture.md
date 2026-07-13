@@ -2,6 +2,9 @@
 
 > Edgebook AI should be simple enough for one founder to operate, structured enough for another engineer to join, and secure enough to protect real users.
 
+Status: Draft
+Last Reviewed: 2026-07-12
+
 ---
 
 ## Evolution Strategy
@@ -16,7 +19,7 @@ Some architectural capabilities will exist before others, but every implementati
 
 The implementation order, priorities, and milestones are documented separately in:
 
-`docs/implementation-roadmap.md`
+`docs/architecture/implementation-roadmap.md`
 
 Keeping the architecture separate from the implementation roadmap allows this document to remain stable while the product evolves.
 
@@ -1183,18 +1186,17 @@ Prefer specific ownership and naming.
 Every major architectural choice should be documented in:
 
 ```text
-docs/decisions/
+docs/architecture/decisions/
 ```
 
-Examples:
+The records currently in `docs/architecture/decisions/`:
 
-- `0001-modular-monolith.md`
-- `0002-nextjs.md`
-- `0003-postgresql.md`
-- `0004-authentication-provider.md`
-- `0005-money-representation.md`
-- `0006-object-storage.md`
-- `0007-ai-provider.md`
+- `0004-authentication-strategy.md`
+- `0006-private-object-storage.md`
+- `0008-supabase-integrated-infrastructure.md`
+- `0009-row-level-security-strategy.md`
+
+Additional ADRs (for example, money representation and the AI provider) will be added here as those decisions are made; a number is assigned when the record is written.
 
 Each record should include:
 

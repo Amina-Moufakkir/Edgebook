@@ -1,6 +1,7 @@
 # Edgebook AI Threat Model
 
-**Status:** Living document  
+**Status:** Draft  
+**Last Reviewed:** 2026-07-12  
 **Method:** Lightweight, feature-driven threat modeling  
 **Owner:** Founder & Lead Engineer  
 **Review triggers:** New sensitive feature, new integration, architecture change, major release, or security incident

@@ -4,6 +4,9 @@
 >
 > **It is here to help traders understand themselves.**
 
+Status: Draft
+Last Reviewed: 2026-07-12
+
 ---
 
 # Purpose

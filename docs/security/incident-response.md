@@ -1,6 +1,7 @@
 # Edgebook AI Incident Response Plan
 
-**Status:** Initial plan  
+**Status:** Draft  
+**Last Reviewed:** 2026-07-12  
 **Owner:** Founder & Lead Engineer  
 **Purpose:** Provide a calm, repeatable response when a security or privacy incident is suspected
 

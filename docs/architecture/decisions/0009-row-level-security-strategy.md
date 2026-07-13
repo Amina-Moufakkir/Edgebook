@@ -3,7 +3,7 @@
 - **Status:** Draft — proposed, not approved. Documents the decision; do not implement until reviewed and approved.
 - **Date:** 2026-07-11
 - **Deciders:** Founder
-- **Related:** [0008 Supabase Integrated Infrastructure], [0004 Authentication Strategy], [0006 Private Object Storage Strategy], [0003 PostgreSQL]
+- **Related:** [0008 Supabase Integrated Infrastructure], [0004 Authentication Strategy], [0006 Private Object Storage Strategy]
 
 ---
 

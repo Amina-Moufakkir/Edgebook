@@ -2,6 +2,9 @@
 
 > The Design System is the single source of truth for every visual decision in Edgebook AI.
 
+Status: Draft
+Last Reviewed: 2026-07-12
+
 It exists to ensure that every screen, component, and interaction feels like part of the same product.
 
 Design decisions belong here.
@@ -34,7 +37,7 @@ It does **not** explain _why_ the interface should feel the way it does.
 
 That philosophy lives in:
 
-`docs/design-principles.md`
+`docs/design/design-principles.md`
 
 ---
 

@@ -2,7 +2,8 @@
 
 # Edgebook AI
 
-**Version:** 1.0 (Draft)
+Status: Draft
+Last Reviewed: 2026-07-12
 
 ---
 
@@ -139,6 +140,8 @@ Examples include:
 
 # Core Product Pillars
 
+_These six pillars describe the full product vision. The first build (MVP) realizes **Journal**, **Reflect**, and **Coach**; **Learn**, **Practice**, and **Improve** arrive post-MVP — see Minimum Viable Product below._
+
 ## Learn
 
 Understand trading concepts, market structure, and trading principles.
@@ -177,57 +180,68 @@ Measure long-term progress through better habits, stronger execution, and more c
 
 # Minimum Viable Product
 
-Version 1 includes:
+> The MVP scope is defined canonically by the flows in `user-flows.md` (F-01–F-07 plus the SF-# supporting flows). This section mirrors that scope; if the two ever diverge, `user-flows.md` wins. Capabilities beyond the first build are listed under **Post-MVP** below — deferred, not dropped.
+
+The first build (Version 1 — MVP) includes:
 
 ## User Accounts
 
-- Authentication
-- User profiles
-- Secure account management
+- Authentication, account recovery, security, profile management, and account deletion (supporting flows SF-01–SF-05)
 
 ---
 
 ## Trading Journal
 
-- Trade creation
-- Multiple executions
-- Position tracking
-- Strategy tags
-- Rule tracking
-- Trade notes
-- Screenshot uploads
+- Trade creation with multiple executions and position tracking
+- Strategy tags, rule tracking, trade notes, and screenshot uploads
+- Browse, edit, and delete trades (F-02–F-06)
 
 ---
 
-## Analytics
+## Per-Trade Reflection & Coaching
 
-- Trading dashboard
-- Performance metrics
-- Win/loss statistics
-- Strategy performance
-- Rule adherence
-- Behavioral trends
+- AI reflection on a single trade along separate structural and behavioral dimensions (F-07)
+- Evidence-based coaching, reflective questions, and explicit acknowledgement of uncertainty
 
 ---
 
-## AI Coaching
+## Core Analytics
 
-- Trade reflections
-- Session reviews
+- A basic orientation dashboard — where the trader is today, and what to do next
+- Core performance metrics: win/loss statistics, strategy performance, rule adherence
+
+---
+
+# Post-MVP (Later in Version 1)
+
+These are part of the Version 1 vision but are **not** in the first build. Each enters through the roadmap and earns its own user flow before implementation.
+
+## Cross-Trade Coaching & Reviews
+
+- End-of-session reviews
 - Weekly reviews
-- Behavioral pattern detection
-- Structural pattern detection
-- Evidence-based coaching
-- Reflective questions
-- Coaching summaries
+- Cross-trade behavioral and structural pattern detection
+- Open-ended "ask the coach" questions
+
+---
+
+## Advanced Analytics (Roadmap Phase 3)
+
+- Streaks, behavioral trend charts, and structural-analysis dashboards
 
 ---
 
 ## Learning Experience
 
-- Simulated trading mode (planned within Version 1 roadmap)
-- Practice journal
-- Progress tracking
+- Simulated trading (Practice) mode
+- Practice journal and progress tracking
+- The Learn pillar (educational content)
+
+---
+
+## Data Rights
+
+- User data export _(account deletion is **MVP** — see User Accounts above)_
 
 ---
 
@@ -332,17 +346,9 @@ It is the foundation of an AI coaching platform that grows alongside the trader 
 
 # Dependencies
 
-This specification works alongside the following project documents:
+The Edgebook AI handbook — its full document map and reading order — is the handbook entry point: `docs/README.md`. Start there.
 
-- `PROJECT_CHARTER.md` — why the product exists
-- `docs/ai-philosophy.md` — how the AI reasons and coaches
-- `docs/design-principles.md` — user experience philosophy
-- `docs/design-system.md` — visual system
-- `docs/architecture.md` — system architecture
-- `docs/security/` — security principles and operational guidance
-- `docs/decisions/` — architectural decision records
-
-This document intentionally avoids duplicating those responsibilities.
+This specification owns *what the product is*: scope, MVP, and boundaries. It intentionally avoids duplicating the responsibilities of the other documents; when this document and another disagree on a shared topic, the document that owns that responsibility wins (for example, `docs/product/user-flows.md` owns MVP scope).
 
 ---
 

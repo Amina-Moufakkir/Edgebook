@@ -4,6 +4,9 @@
 >
 > **It is designed to help traders think more clearly.**
 
+Status: Draft
+Last Reviewed: 2026-07-12
+
 ---
 
 # Purpose

@@ -10,7 +10,7 @@ independent of screens or components. Not a sitemap. Not a UI spec.
 - Flows are the source of truth for _what must work_, not _how it looks_.
 - Screens/components are derived from flows, never the reverse.
 - Reference global rules by ID (e.g. "GR-2").
-- Status: Frozen (v1.0)
+- Status: Frozen v1.0
 - Last Reviewed: 2026-07-12
 - Changes to this document should be driven by implementation experience rather than theoretical refinement.
 
@@ -134,7 +134,22 @@ The following journeys are intentionally deferred. They remain part of the long-
 - Practice in Simulation
 - Compare Simulation vs. Live Trading
 - Export User Data
-- Delete User Account
+
+---
+
+## Supporting Flows
+
+The following journeys are **supporting infrastructure**, not core coaching flows. The product cannot function without them, but they are not where its value lives — so they are kept separate from the core `F-#` flows to preserve the product's focus on coaching rather than infrastructure.
+
+These are named here; each will be expanded with the per-flow template when its journey is defined. Supporting flows may be MVP-required (the application cannot be used without authentication) without being core product flows — "must ship" and "core" are separate axes.
+
+- **SF-01** — Sign In
+- **SF-02** — Password Recovery
+- **SF-03** — Manage Security & Sessions
+- **SF-04** — Manage Profile
+- **SF-05** — Delete Account _(MVP — promoted from Planned on trust/privacy grounds; account erasure is a responsibility the first build must meet. Export User Data remains Planned.)_
+
+_Screens for these exist provisionally in `screen-inventory.md` (S-02, S-04, S-20, S-18, S-21) and trace to these IDs. Detailed journeys are not yet drafted._
 
 ---
 

@@ -3,7 +3,7 @@
 - **Status:** Draft — proposed, not approved. Documents the decision; do not initialize or implement until reviewed and approved.
 - **Date:** 2026-07-11
 - **Deciders:** Founder
-- **Related:** [0003 PostgreSQL], [0004 Authentication Strategy], [0006 Private Object Storage Strategy], [0009 Row-Level Security Strategy]
+- **Related:** [0004 Authentication Strategy], [0006 Private Object Storage Strategy], [0009 Row-Level Security Strategy]
 
 ---
 

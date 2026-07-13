@@ -1,5 +1,7 @@
 # Edgebook AI Security Release Checklist
 
+**Status:** Draft  
+**Last Reviewed:** 2026-07-12  
 **Purpose:** Go/no-go security review before deployment  
 **Use for:** Major releases, authentication changes, data-model changes, AI changes, uploads, exports, new providers, and production launch  
 **Decision:** A release must not proceed with unresolved Critical findings or unaccepted High risk.

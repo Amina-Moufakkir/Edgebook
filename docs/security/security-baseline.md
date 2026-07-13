@@ -1,9 +1,10 @@
 # Edgebook AI Security Baseline
 
-**Status:** Living document  
+**Status:** Draft  
+**Last Reviewed:** 2026-07-12  
 **Applies to:** Development, staging, production, AI features, infrastructure, and operational workflows  
 **Owner:** Founder & Lead Engineer  
-**Review cadence:** At least quarterly and before every major release
+**Review Cadence:** At least quarterly and before every major release
 
 > Security is a design constraint, not a deployment checklist.
 
@@ -12,6 +13,8 @@
 This document defines the minimum security expectations for Edgebook AI.
 
 It is a working baseline, not a guarantee of security and not a substitute for an independent professional review. Requirements should evolve with the product, architecture, user count, integrations, and sensitivity of stored data.
+
+These requirements describe the **target security posture**. Some capabilities are delivered incrementally according to the product roadmap (for example, account deletion ships in the MVP while user-data export is Planned) — but scheduling a capability later never lowers the security bar for what already ships.
 
 The project should use OWASP ASVS as the verification backbone and NIST SSDF as the secure-development process reference.
 
