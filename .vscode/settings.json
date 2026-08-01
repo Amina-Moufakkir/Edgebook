@@ -6,8 +6,10 @@
     "FINRA",
     "forex",
     "IBKR",
+    "journaling",
     "pipette",
     "satoshi",
+    "underspecification",
     "unvalidated",
 
     // Stack & infrastructure — churn-prone. Prune when the stack or provider changes.

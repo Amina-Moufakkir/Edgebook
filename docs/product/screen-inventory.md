@@ -58,7 +58,7 @@ _This draft made three judgment calls that are yours to overturn. Each was re-va
 
 1. **Pure inventory.** The inventory lists only routable screens. Confirmations and dependency-failure conditions are recorded as **states**, not screens — reclassifying the proposed **S-13 Trade Confirmation**, **S-16 Delete Trade Confirmation**, and **S-22 AI Unavailable** into [Cross-Cutting States](#cross-cutting-states). _(Confirmed by `architecture.md` Error Handling: AI failure is degradation behavior, not a destination.)_
 2. **Removed S-09 Application Shell and S-10 Navigation.** `design-system.md` → Layout System owns navigation and shell dimensions; they are the frame screens render into, not destinations. See [Removed / Reclassified](#removed--reclassified).
-3. **Authentication homed under Supporting Flows.** Auth and account-management screens support no *core* product flow, but the product still requires them. They now trace to **Supporting Flows** (`SF-#`) in `user-flows.md` — a category kept separate from the core coaching flows so the product's focus stays on coaching. The named flows exist; **SF-05 is drafted**, and the SF-01–SF-04 journeys are not yet. See [Cross-Document Consistency](#cross-document-consistency).
+3. **Authentication homed under Supporting Flows.** Auth and account-management screens support no *core* product flow, but the product still requires them. They now trace to **Supporting Flows** (`SF-#`) in `user-flows.md` — a category kept separate from the core coaching flows so the product's focus stays on coaching. The named flows exist; **SF-02 and SF-05 are drafted**, and SF-01, SF-03 and SF-04 are not yet. See [Cross-Document Consistency](#cross-document-consistency).
 
 Retired IDs (S-09, S-10, S-13, S-16, S-22) are **not reused**.
 
@@ -148,14 +148,14 @@ _Not every screen needs every field. An omitted field must be intentional — na
 ## S-04 — Password Recovery
 
 - **Status:** MVP
-- **Supported Flow(s):** SF-02 Password Recovery (supporting flow — detailed journey not yet drafted)
+- **Supported Flow(s):** SF-02 Password Recovery (supporting flow — **journey drafted** in `user-flows.md`)
 - **Primary Actor:** Locked-out user
 - **Primary Purpose:** Let a user securely regain access.
 - **Entry Points:** S-02
 - **Exit Points:** → S-02 Sign In
 - **Required States:** Loading · Populated · Validation Error · Recoverable Failure (expired / invalid token)
 - **Security & Privacy Notes:** GR-1. No account enumeration. Time-limited, single-use reset tokens.
-- **Open Questions:** SF-02's journey is undrafted.
+- **Open Questions:** Owned by `user-flows.md` → SF-02 Open Questions now that the journey is drafted. Still live there: whether recovery requires an MFA challenge (an unresolved gap in ADR 0004 — recovery that bypasses MFA defeats it), whether a new request invalidates outstanding tokens, and whether a password-change notification is sent. Note the **uniform-response requirement**: this screen's Validation Error and Recoverable Failure states must not distinguish invalid from expired from already-used tokens, nor reveal whether an address has an account.
 
 ---
 
@@ -401,7 +401,7 @@ Every flow maps to at least one screen; every screen traces back to a flow. The 
 | **F-06** Delete a Trade | S-14 (no dedicated screen) | Destructive Confirmation |
 | **F-07** Reflect on a Trade with the AI Coach | S-17 | — |
 
-**Supporting Flows** _(infrastructure; SF-05 drafted in `user-flows.md`, SF-01–SF-04 not yet)_
+**Supporting Flows** _(infrastructure; SF-02 and SF-05 drafted in `user-flows.md`; SF-01, SF-03, SF-04 not yet)_
 
 | Flow | Screen(s) | Flow-end state |
 |---|---|---|
@@ -437,9 +437,9 @@ _Answers to the review questions, after applying the changes above._
 
 1. **Is the responsibility still crystal clear?** Yes — sharpened. The doc identifies screens supporting approved flows and nothing else; layout, navigation, components, and implementation are explicitly delegated in [Related Documents](#related-documents).
 2. **Is anything drifting toward design-system or user-flows responsibilities?** The remaining risk was `Required States` inventing interaction micro-states (`submitting`, `draft-restored`); the [Standard States](#standard-states) vocabulary pulled those back to product-level conditions. No layout, component, or navigation detail remains.
-3. **Screens that should exist but don't?** None new for the approved flows. The remaining upstream work is drafting the **Supporting Flow** journeys **SF-01…SF-04** that S-02/S-04/S-18/S-20 already trace to; SF-05 (S-21) is drafted.
+3. **Screens that should exist but don't?** None new for the approved flows. The remaining upstream work is drafting the **Supporting Flow** journeys **SF-01, SF-03 and SF-04** that S-02/S-20/S-18 already trace to; SF-02 (S-04) and SF-05 (S-21) are drafted.
 4. **Screens that should be removed as layouts / navigation / states?** Done — S-09, S-10 removed (layout/navigation); S-13, S-16, S-22 reclassified as states.
-5. **Ready to become the authoritative MVP screen inventory?** **Yes, for the MVP scope as it stands.** Every MVP screen traces to an approved flow (core or supporting). S-21 is MVP (hosts account deletion, SF-05); data export remains Planned. S-08's responsibility is intentionally deferred to implementation (candidate parked, ⚠ retained as a known decision). The one remaining upstream task — drafting the SF-01…SF-04 journeys (SF-05 is done) — deepens flow detail but doesn't block the inventory.
+5. **Ready to become the authoritative MVP screen inventory?** **Yes, for the MVP scope as it stands.** Every MVP screen traces to an approved flow (core or supporting). S-21 is MVP (hosts account deletion, SF-05); data export remains Planned. S-08's responsibility is intentionally deferred to implementation (candidate parked, ⚠ retained as a known decision). The one remaining upstream task — drafting the SF-01, SF-03 and SF-04 journeys (SF-02 and SF-05 are done) — deepens flow detail but doesn't block the inventory.
 
 ---
 

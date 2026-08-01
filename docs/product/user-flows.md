@@ -144,12 +144,12 @@ The following journeys are **supporting infrastructure**, not core coaching flow
 These are named here; each will be expanded with the per-flow template when its journey is defined. Supporting flows may be MVP-required (the application cannot be used without authentication) without being core product flows — "must ship" and "core" are separate axes.
 
 - **SF-01** — Sign In
-- **SF-02** — Password Recovery
+- **SF-02** — Password Recovery _(drafted below)_
 - **SF-03** — Manage Security & Sessions
 - **SF-04** — Manage Profile
 - **SF-05** — Delete Account _(drafted below. MVP — promoted from Planned on trust/privacy grounds; account erasure is a responsibility the first build must meet. Export User Data remains Planned.)_
 
-_Screens for these exist provisionally in `screen-inventory.md` (S-02, S-04, S-20, S-18, S-21) and trace to these IDs. **SF-05 is drafted below**; the SF-01–SF-04 journeys are not yet drafted and are written against ADR 0004, whose security requirements bind them._
+_Screens for these exist provisionally in `screen-inventory.md` (S-02, S-04, S-20, S-18, S-21) and trace to these IDs. **SF-02 and SF-05 are drafted below**; SF-01, SF-03 and SF-04 are not yet drafted. All are written against ADR 0004, whose security requirements bind them._
 
 ---
 
@@ -283,6 +283,123 @@ From an authenticated session in which the trader chooses to log a new trade aga
 
 ---
 
+## SF-02 — Password Recovery
+
+> Supporting flow. Drafted second because it is the first journey in the handbook where the product must **deliberately withhold information from the person in front of it**. Written against ADR 0004 (single-use time-limited tokens, session revocation, rate limits, enumeration resistance).
+
+### Primary Actor
+
+An **unauthenticated person** who believes they have an Edgebook AI account and cannot sign in.
+
+_Deliberately not "a trader." Until a token is verified, the system has no established identity and must behave identically whether or not the address belongs to an account. Naming the actor precisely is the first place enumeration resistance shows up._
+
+### Status
+
+MVP · Supporting flow.
+
+### Applicable Global Rules
+
+- **GR-1** — token verification, password change, and session revocation are performed and authorized server-side. A client-supplied claim about which account is being recovered is never trusted.
+- **GR-2** — the person always knows what to do next, at every step, including the steps where the system will not tell them why. See the scope note below.
+
+_GR-3, GR-4, GR-5, GR-7, GR-8 and GR-10 are not applicable: no facts are computed, no evidence is presented, and no AI participates. GR-6 is not applicable — there is no in-progress work to preserve; an abandoned recovery leaves the existing password working. GR-9 is not claimed: setting a new password is the purpose of the flow, not a destructive action requiring confirmation, and the session revocation it causes is disclosed under GR-2 rather than confirmed under GR-9._
+
+**GR-2 scope note — the first real tension in the handbook.** GR-2 requires the user understand *what happened, why it happened, and what they can do next*. ADR 0004 requires that password-reset responses **not** reveal whether an email exists — uniform messaging and timing, always "if an account exists, an email was sent." For an address with no account, the "why" is deliberately withheld. These are not reconcilable by wording.
+
+The resolution this flow adopts, without amending GR-2: **GR-2's guarantee runs to an identified user, and before authentication there is no identified user to owe it to.** Enumeration resistance operates precisely in the region where identity is not yet established. Once a token is verified and identity *is* established, GR-2 applies in full and this flow satisfies it completely — the person is told exactly what happened to their password and their sessions.
+
+What GR-2 still binds absolutely, even pre-authentication: **"what they can do next" is never withheld.** The uniform message must always leave a clear path — check your email, request another link, or create an account — so that the withheld "why" never becomes a dead end. Withholding a reason is permitted; stranding a person is not.
+
+_This scope question is not settled here. SF-01 will hit it identically, and GR-2's text says nothing about pre-authentication. Recorded in Future Enhancement Notes → Rule Candidates._
+
+### User Goal
+
+Regain access to their account, without learning — or allowing anyone else to learn — anything about which email addresses have accounts.
+
+### Emotional Context
+
+Someone recovering a password is locked out and often in a hurry; the market may be open. The flow is brief and unembellished.
+
+The uniform response is the hard part emotionally: a person who mistyped their email is told the same thing as a person whose account exists, and will wait for a message that never arrives. The flow cannot fix that by explaining, so it must compensate by making the alternatives obvious and immediate rather than leaving the person to conclude the product is broken.
+
+### Entry Point
+
+From S-04 Password Recovery, reached from S-02 Sign In. Available only to unauthenticated visitors.
+
+### Preconditions
+
+None. The flow is entered without an established identity and **must behave identically for an address with no account** — that is the requirement, not an edge case.
+
+### Primary Path
+
+1. The person submits an email address.
+2. The system responds **uniformly** — the same message, and the same timing, regardless of whether the address has an account (ADR 0004). The response names the next steps available in either case.
+3. If, and only if, the address has an account, a message is sent containing a **single-use, time-limited** recovery link (ADR 0004).
+4. The person opens the link. The server verifies the token — validity, expiry, single use — and only then establishes the identity being recovered (GR-1).
+5. The person sets a new password.
+6. On successful change, the server **revokes all existing sessions** for that account (ADR 0004: "server-side revocation on sign-out and password/MFA change"). The token is consumed and cannot be reused.
+7. The person is told plainly that their password has changed and that **all other sessions were signed out**, and is routed to sign in with the new password (GR-2).
+
+### System Responses
+
+- **Uniform response, uniform timing.** Response content and latency do not vary with account existence. Timing equivalence is a requirement, not an implementation detail — a timing difference is an enumeration oracle regardless of how identical the text is.
+- Tokens are single-use and time-limited; verification, consumption, and expiry are enforced server-side.
+- **Session revocation happens on password change, not on reset request.** This matters: revoking on request would let anyone who knows an address sign that person out at will, a denial-of-service requiring no access at all. ADR 0004 specifies the safe reading, though across two sections — see Open Questions.
+- Recovery attempts are rate-limited per IP and per account, and logged as security events (ADR 0004). Internal logs record the truth, including whether the address existed; the *response* never does.
+
+### Validation & Failure States
+
+- **Invalid, expired, or already-used tokens** produce one uniform outcome with a clear next step ("this link is no longer valid — request a new one"). The three cases are not distinguished, because distinguishing them tells an attacker which tokens were real.
+- A rejected password (policy failure) is explained plainly — identity is established by then, so GR-2 applies in full.
+- **Rate-limit responses must not become an oracle.** If a real account and an unknown address hit different limits, or produce different messages when throttled, enumeration resistance is defeated by the defense meant to protect it.
+- Failure at any step leaves the existing password working. A failed recovery never locks anyone out.
+
+### Abandonment & Re-entry
+
+- Abandoning changes nothing: the existing password still works and outstanding tokens expire on their own.
+- Re-entry starts the flow over. Nothing is preserved and nothing needs to be (GR-6 deliberately not claimed).
+- Whether requesting a new link invalidates outstanding ones is **not specified** by ADR 0004 — see Open Questions.
+
+### Completion State
+
+- The password is changed, every previously existing session for that account is revoked, and the recovery token is consumed.
+- **The flow completes when the person knows their password changed and knows their other sessions were ended** — not at the moment the password row is written. A person who regains access but does not realize every device was signed out has not been given the outcome.
+- They are signed out everywhere and sign in fresh with the new password.
+
+_Third observation of the confirmed-outcome boundary, again recorded and again **not** promoted — the rule candidate names F-05 and F-06 as its tests, and two of the three observations so far are supporting flows, which is weaker ground than the core destructive flows deliberately reserved for it._
+
+### Security & Privacy Notes
+
+- **Enumeration resistance (ADR 0004)** governs this flow more than any other single constraint, and it is verified by tests comparing both response content and response timing for existing versus non-existing addresses — not asserted.
+- **GR-1** — identity is established by server-side token verification, never by anything the client asserts about whose account is being reset.
+- **Tokens** are single-use and time-limited, consumed on use, and never logged.
+- **Session revocation** on password change is part of recovery, not a side effect of it: recovery exists partly to evict an attacker who already holds a session.
+- **Rate limiting** applies per IP and per account (ADR 0004) and is itself designed not to leak account existence.
+- **Logging** records recovery attempts as security events without recording tokens, passwords, or the content of the message sent.
+- **The recovery message contains no private data** — no trading data, no account details, nothing beyond what a stranger reading the inbox may see.
+
+### Success Metric
+
+- **Recovery works:** share of legitimate attempts that end in restored access without support contact.
+- **No enumeration signal:** automated tests show no difference in response content or timing between existing and non-existing addresses — the primary security metric of this flow.
+- **Token discipline:** reused and expired tokens are rejected 100% of the time.
+- **Eviction works:** after a recovery, previously issued sessions are provably unusable.
+- **The withheld "why" does not strand people:** the uniform message's next steps are followed rather than abandoned.
+
+### Open Questions
+
+**Architecture Dependencies**
+
+- **ADR 0004 states session revocation timing in two places, and only one of them is unambiguous.** *Account recovery* says "Recovery invalidates existing sessions"; *Session handling* says revocation occurs "on sign-out and password/MFA change." Together they specify the safe reading — revocation on change, not on request — but the recovery bullet read alone appears to permit the unsafe one, which would be a denial-of-service vector. Recommend amending 0004's recovery bullet to say "on password change" explicitly. This flow assumes that reading.
+- **Does recovery interact with MFA at all?** ADR 0004 requires MFA for administrative access and encourages it for users, but says nothing about whether recovery requires a second factor. **A recovery flow that bypasses MFA is an account-takeover path that defeats MFA entirely** — email access alone becomes sufficient. This is a genuine gap in an Accepted ADR, not an underspecification of this flow, and it should be resolved in 0004 before SF-03 (Manage Security & Sessions) is drafted.
+- **Does a new recovery request invalidate outstanding tokens?** Not specified. Only-the-latest-token-is-valid is the safer default; multiple live tokens widen the window.
+
+**Product Decisions**
+
+- **Is the account notified when its password changes?** A "your password was changed" message is standard practice and is how a victim learns of a takeover — but it is a message sent to an address that may be attacker-controlled, and its wording must not restate private data.
+
+---
+
 ## SF-05 — Delete Account
 
 > Supporting flow. Drafted first among the SF-# journeys because it is MVP, irreversible, and cascades to every private record the product holds. It is written against ADR 0004 (sessions, re-authentication), ADR 0006 (file deletion), ADR 0009 (ownership chain), and `security-baseline.md` §6.
@@ -303,7 +420,7 @@ MVP · Supporting flow. **Not fully closeable** — see Open Questions; the dele
 
 _GR-3, GR-4, GR-5, GR-7, GR-8 and GR-10 are not applicable: this flow computes no facts, presents no evidence, and involves no AI. Deletion completes normally when AI is unavailable because the AI plays no part in it._
 
-_**GR-6 is deliberately not claimed**, though the guarantee it was nearly claimed for is essential. "A failed deletion leaves the account fully intact" is an **atomicity** property; GR-6's own words are "draft and in-progress work survives recoverable failures" — preservation of user work. Two things make it the wrong owner here: this flow has no in-progress work to preserve, and its Abandonment & Re-entry section deliberately preserves **nothing** — re-entry restarts, re-authentication included, by design. Claiming GR-6 would give one rule two meanings and put it at odds with this flow's own recovery behaviour. The guarantee is stated instead where it already lives: `architecture.md` → **Transaction Boundaries**, which names "applying account deletion state" among its examples, and which F-03 already relies on with no GR tag ("a partial write never persists"). See Future Enhancement Notes → Rule Candidates for whether destructive atomicity should eventually become a rule of its own._
+_**GR-6 is deliberately not claimed**, though the guarantee it was nearly claimed for is essential. "A failed deletion leaves the account fully intact" is an **atomicity** property; GR-6's own words are "draft and in-progress work survives recoverable failures" — preservation of user work. Two things make it the wrong owner here: this flow has no in-progress work to preserve, and its Abandonment & Re-entry section deliberately preserves **nothing** — re-entry restarts, re-authentication included, by design. Claiming GR-6 would give one rule two meanings and put it at odds with this flow's own recovery behavior. The guarantee is stated instead where it already lives: `architecture.md` → **Transaction Boundaries**, which names "applying account deletion state" among its examples, and which F-03 already relies on with no GR tag ("a partial write never persists"). See Future Enhancement Notes → Rule Candidates for whether destructive atomicity should eventually become a rule of its own._
 
 ### User Goal
 
@@ -449,6 +566,12 @@ Deferred rule ideas observed in a single flow, not yet general enough to become 
 
 - SF-05 nearly claimed **GR-6** for it. That was wrong twice over: GR-6 owns preservation of in-progress *work*, not atomicity, and SF-05 deliberately preserves nothing across abandonment. The near-miss is recorded because the pull toward the nearest available rule will recur.
 - Pressure-test when drafting **F-06 — Delete a Trade**. If a destructive flow needs a *testable flow-level* constraint that Transaction Boundaries does not give it, that is the argument for a rule. If architecture's ownership proves sufficient, leave it there — an existing owner beats a new rule.
+
+**GR-2's scope before authentication.** SF-02 is the first flow where GR-2's "why it happened" is deliberately withheld — enumeration resistance (ADR 0004) forbids revealing whether an email has an account. SF-02 resolves it by reading GR-2's guarantee as running to an *identified* user, with "what they can do next" still binding absolutely even pre-authentication.
+
+- GR-2's text says nothing about pre-authentication, so this is a reading, not a rule.
+- **SF-01 — Sign In** hits it identically ("unknown user" and "wrong password" must be indistinguishable). Decide the scope question when SF-01 is drafted, with two flows in hand rather than one.
+- Resist the temptation to amend GR-2 in the meantime; `user-flows.md` is frozen and one flow is not evidence.
 
 **Do not strengthen GR-2 yet.** GR-2's current responsibility is already clear and self-contained:
 
