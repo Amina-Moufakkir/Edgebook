@@ -343,7 +343,7 @@ A task is complete only when:
 - type checking passes
 - linting passes
 - security implications were considered
-- accessibility was considered
+- accessibility requirements are satisfied — verified by the accessibility test layer (`docs/architecture/architecture.md` → Testing Strategy), not merely considered
 - documentation remains accurate
 - no unrelated scope was introduced
 

@@ -920,6 +920,22 @@ Used for:
 - AI coaching flows
 - account deletion
 
+### Accessibility Tests
+
+Accessibility is a completion gate in the Definition of Done (`product-spec.md`, `CLAUDE.md`) and a founding product principle (`PROJECT_CHARTER.md` — "Accessibility by default"). This layer is what makes that gate close. The **bar** is owned by `design-system.md` → Accessibility Standards; this layer is how the bar is verified rather than asserted.
+
+Required for:
+
+- automated rule scans (e.g. axe-core) over every screen and every cross-cutting state
+- keyboard-only traversal of each flow's primary path, reaching every interactive control
+- visible focus, and focus order — including where focus lands after navigation and after a dialog or confirmation is dismissed
+- contrast ratios for text, icons, and state indicators, measured against design-system tokens
+- reduced-motion preference honored by every animated transition
+- semantic structure and accessible names for controls, with form errors programmatically associated to their fields
+- the standard states — loading, empty, validation error, authorization error — conveyed to assistive technology, never by color or position alone
+
+These are ordinary tests: an accessibility regression fails the build like any other. The checks are named here rather than left as "accessibility is tested," because a gate whose verification is unspecified is a gate that silently does not close.
+
 ### Security Tests
 
 Required for:

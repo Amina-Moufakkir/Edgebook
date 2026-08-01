@@ -399,6 +399,8 @@ Every component should support:
 
 Accessibility should never be sacrificed for aesthetics.
 
+This section defines the **bar**. It is enforced by the accessibility test layer in `architecture.md` → Testing Strategy — automated rule scans, keyboard traversal, focus order, contrast against tokens, reduced motion, and semantic structure. The bar and its verification are deliberately in separate documents: this one owns what "accessible" means, that one owns proving it.
+
 ---
 
 # AI Generated UI Rules
