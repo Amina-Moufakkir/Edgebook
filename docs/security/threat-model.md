@@ -193,10 +193,12 @@ For each boundary, document:
 - vetted authentication provider
 - secure session cookies
 - MFA for administrators
+- **recovery satisfies enrolled factors — no recovery path bypasses MFA** (ADR 0004; otherwise email access alone is sufficient for takeover)
 - rate limiting
 - account-enumeration resistance
+- **rate-limit behavior identical for existing and unknown accounts**, so the throttle is not an enumeration oracle
 - short-lived, single-use recovery tokens
-- session revocation
+- session revocation on password change (not on reset request, which would be a denial-of-service vector)
 - suspicious login monitoring
 
 **Verification:**
@@ -204,6 +206,8 @@ For each boundary, document:
 - reset tokens cannot be reused
 - old sessions are invalidated after security-sensitive events
 - repeated login attempts are throttled
+- a recovery attempt against an MFA-enrolled account cannot complete without the second factor
+- rate-limit responses and timings are indistinguishable between existing and unknown addresses
 
 ---
 

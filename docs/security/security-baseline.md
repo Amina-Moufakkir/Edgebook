@@ -123,6 +123,8 @@ Examples:
 - [ ] MFA is required for administrative accounts and supported for users when practical.
 - [ ] Authentication responses avoid revealing whether an account exists.
 - [ ] Account recovery is treated as a security-sensitive authentication flow.
+- [ ] Account recovery satisfies every factor the account has enrolled; a recovery path never bypasses MFA (ADR 0004).
+- [ ] Rate-limit responses do not vary with account existence, so throttling cannot become an enumeration oracle.
 - [ ] Reset tokens are single-use, short-lived, and invalidated after use.
 - [ ] Sessions expire and can be revoked.
 - [ ] Password changes, account compromise, and global sign-out invalidate relevant sessions.

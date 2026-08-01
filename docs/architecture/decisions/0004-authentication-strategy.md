@@ -1,7 +1,7 @@
 # 0004 — Authentication Strategy
 
-- **Status:** Accepted — approved 2026-08-01. Implementation may proceed against this record. Its security requirements are binding on the SF-01–SF-04 flows, which are drafted against this record rather than ahead of it.
-- **Date:** 2026-07-11 (drafted) · 2026-08-01 (accepted)
+- **Status:** Accepted — approved 2026-08-01, **amended 2026-08-01** (see Amendments). Implementation may proceed against this record. Its security requirements are binding on the SF-01–SF-04 flows, which are drafted against this record rather than ahead of it. **One consequence of the amendment is open and not approved:** the lost-second-factor recovery path.
+- **Date:** 2026-07-11 (drafted) · 2026-08-01 (accepted) · 2026-08-01 (amended)
 - **Deciders:** Founder
 - **Related:** [0008 Supabase Integrated Infrastructure], [0009 Row-Level Security Strategy], [0006 Private Object Storage Strategy]
 
@@ -49,8 +49,9 @@ Authentication answers *who is calling*. It never proves permission to access a 
 **Account recovery**
 
 - Password reset and recovery use single-use, time-limited tokens.
-- Recovery invalidates existing sessions.
-- Recovery attempts are rate-limited and logged as security events.
+- Recovery invalidates existing sessions **on password change, not on reset request.** Revoking on request would let anyone who knows an address sign that person out at will — a denial of service requiring no access to the account. (Consistent with Session handling above; stated here so this bullet is correct read alone.)
+- **Recovery must satisfy every factor the account has enrolled.** Where MFA is enrolled, a recovery flow challenges the second factor before the password may be changed. Recovery is an authentication path, not an exception to authentication.
+- Recovery attempts are rate-limited and logged as security events. **Rate-limit behavior must not vary with account existence** — differing limits, messages, or timings between real and unknown addresses turn the throttle into the enumeration oracle that enumeration resistance exists to prevent.
 
 **MFA (admin-required)**
 
@@ -112,6 +113,24 @@ Supabase Auth is chosen because it shares one identity model with the database a
 - Application user/profile records in Postgres reference identity by a stable UUID, so application data is not owned by the provider.
 - Because the application owns authorization, swapping providers changes identity issuance only, not permission logic.
 - A migration path (export accounts, re-issue credentials via reset flows) is documented before this component would be replaced.
+
+## Amendments
+
+### 2026-08-01 — Recovery must satisfy enrolled factors
+
+**Found by drafting `user-flows.md` → SF-02 (Password Recovery), after this record was approved.** The ADR review examined every provision and found them individually sound. The defect lived in the *seam* between two of them: MFA was required for administrative access, and account recovery was specified with no reference to MFA at all. Each read correctly alone. Together they meant **email access alone was sufficient to take over any account, including an administrative one** — making the mandatory MFA requirement decorative for exactly the accounts it was mandatory for.
+
+This amendment does **not** introduce a new policy. It makes explicit what this record's existing MFA requirement already entailed: an authentication requirement that a recovery path can bypass is not a requirement. Two supporting corrections travel with it — the session-revocation bullet now states its own timing rather than relying on a reader also consulting Session handling, and rate limiting is required not to vary with account existence, so the throttle cannot become the enumeration oracle that enumeration resistance exists to prevent.
+
+**Open — founder decision required. What happens when the second factor is also lost?**
+
+Requiring the second factor during recovery closes the bypass, and immediately raises the question it was hiding: a trader who loses both their password and their second factor now has no path back. Every option is a real trade, and this record does not choose one:
+
+- **Recovery codes issued at MFA enrolment.** The standard answer. Cost: the codes become a credential the trader must store safely, and the flow must handle them being lost too.
+- **Support-mediated identity verification.** Becomes the weakest link in the entire authentication design — an attacker who can convince support bypasses every control above. For a solo founder there is no support organisation to harden, which makes this the least suitable option here, not the most.
+- **No recovery path.** Losing both means losing the account permanently. Honest, unambiguous, and defensible for a product holding a trader's private journal — but it must be disclosed at enrolment, not discovered at the moment of loss.
+
+This is a product and trust decision, not an architectural one. It should be answered before **SF-03 — Manage Security & Sessions** is drafted, since SF-03 is where MFA enrolment lives and would otherwise encode a policy that has not been chosen.
 
 ## Review Triggers
 

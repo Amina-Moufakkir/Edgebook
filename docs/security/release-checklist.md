@@ -55,7 +55,8 @@
 
 - [ ] Authentication uses the approved provider or library.
 - [ ] Registration, sign-in, sign-out, and account recovery were tested.
-- [ ] Account enumeration is not exposed.
+- [ ] Account enumeration is not exposed: sign-in, sign-up, and password-reset responses for an existing address and a non-existent one are compared and found indistinguishable in body, status code, **and latency** — on both the normal and the rate-limited path.
+- [ ] Account recovery cannot bypass MFA: a recovery attempt against an MFA-enrolled account is run and confirmed unable to complete without the second factor.
 - [ ] Rate limits apply to authentication endpoints.
 - [ ] Session expiration behaves as documented.
 - [ ] Session revocation works.
@@ -283,8 +284,9 @@ Record command and result.
 
 - [ ] Attempted direct object reference manipulation.
 - [ ] Attempted privilege escalation.
-- [ ] Attempted account enumeration.
+- [ ] Attempted account enumeration — via response body, status code, and response timing, on both normal and throttled paths.
 - [ ] Attempted rate-limit bypass.
+- [ ] Attempted password recovery against an MFA-enrolled account without the second factor.
 - [ ] Attempted malformed and oversized upload.
 - [ ] Attempted XSS in journal and AI content.
 - [ ] Attempted CSV formula injection.
