@@ -183,7 +183,7 @@ _Not every screen needs every field. An omitted field must be intentional — na
 - **Exit Points:** → S-07 Onboarding Complete (onboarding path) · → S-19 (settings path)
 - **Required States:** Loading · Populated · Validation Error
 - **Security & Privacy Notes:** GR-1 — account creation authorized server-side and bound to the owning user.
-- **Open Questions:** Account fields — especially currency — depend on the money-representation ADR.
+- **Open Questions:** Whether an account may hold more than one currency — **still open**, pending ADR 0010 Open Question 2. _(The money representation itself is settled by ADR 0010, Accepted 2026-08-01; every monetary value carries an explicit currency regardless of how the multi-currency question resolves.)_
 
 ## S-07 — Onboarding Complete
 

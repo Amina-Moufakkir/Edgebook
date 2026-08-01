@@ -279,7 +279,7 @@ From an authenticated session in which the trader chooses to log a new trade aga
 **Architecture Dependencies**
 
 - Timezone and trading-session handling for execution timestamps.
-- Multi-currency accounts and the money representation (pending the money-representation ADR).
+- Multi-currency accounts — **still open**, pending ADR 0010 Open Question 2. _(The money representation itself is resolved: ADR 0010, Accepted 2026-08-01. Its scope answer — equities-first MVP, no crypto — is what "the approved money representation" in Validation now refers to.)_
 
 ---
 

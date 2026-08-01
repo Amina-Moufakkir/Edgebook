@@ -1195,8 +1195,9 @@ The records currently in `docs/architecture/decisions/`:
 - `0006-private-object-storage.md`
 - `0008-supabase-integrated-infrastructure.md`
 - `0009-row-level-security-strategy.md`
+- `0010-money-representation.md`
 
-Additional ADRs (for example, money representation and the AI provider) will be added here as those decisions are made; a number is assigned when the record is written.
+Additional ADRs (for example, the AI provider) will be added here as those decisions are made; a number is assigned when the record is written.
 
 Each record should include:
 
@@ -1219,7 +1220,6 @@ The following decisions require further evaluation:
 - Should row-level security be used in the first release?
 - Which authentication provider should be used?
 - Which ORM or database-access approach should be used?
-- How should monetary values be represented?
 - Which object-storage provider should be used?
 - Which AI provider and model strategy should be used?
 - Should AI conversations be stored by default?

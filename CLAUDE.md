@@ -252,6 +252,8 @@ Documentation exists before implementation.
 
 Each handbook document carries a `Status:` field—`Draft` (open to change), `Frozen v1.0` (protected), or `Deprecated` (superseded)—that signals whether it may be edited.
 
+ADRs use their own lifecycle: `Draft` (proposed, not approved—nothing is built against it) or `Accepted` (approved; implementation may proceed). An ADR's approval is a single action: set the status, record any scope answer the decision depended on, and close the corresponding `architecture.md` Open Question in the same change.
+
 If implementation changes a documented decision:
 
 Update the owning document.

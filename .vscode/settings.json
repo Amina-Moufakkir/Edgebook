@@ -1,0 +1,24 @@
+{
+  "cSpell.words": [
+    // Domain vocabulary — permanent. Outlives any technology choice.
+    "approvable",
+    "Edgebook",
+    "FINRA",
+    "forex",
+    "IBKR",
+    "pipette",
+    "satoshi",
+    "unvalidated",
+
+    // Stack & infrastructure — churn-prone. Prune when the stack or provider changes.
+    // See design-system.md → Technology Stack, and ADR 0008 (which anticipates separation).
+    "cva",
+    "Lucide",
+    "Postgres",
+    "Radix",
+    "RLS",
+    "shadcn",
+    "Supabase",
+    "Tailwind"
+  ]
+}
