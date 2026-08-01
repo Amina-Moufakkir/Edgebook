@@ -58,7 +58,7 @@ _This draft made three judgment calls that are yours to overturn. Each was re-va
 
 1. **Pure inventory.** The inventory lists only routable screens. Confirmations and dependency-failure conditions are recorded as **states**, not screens — reclassifying the proposed **S-13 Trade Confirmation**, **S-16 Delete Trade Confirmation**, and **S-22 AI Unavailable** into [Cross-Cutting States](#cross-cutting-states). _(Confirmed by `architecture.md` Error Handling: AI failure is degradation behavior, not a destination.)_
 2. **Removed S-09 Application Shell and S-10 Navigation.** `design-system.md` → Layout System owns navigation and shell dimensions; they are the frame screens render into, not destinations. See [Removed / Reclassified](#removed--reclassified).
-3. **Authentication homed under Supporting Flows.** Auth and account-management screens support no *core* product flow, but the product still requires them. They now trace to **Supporting Flows** (`SF-#`) in `user-flows.md` — a category kept separate from the core coaching flows so the product's focus stays on coaching. The named flows exist; their detailed journeys are not yet drafted. See [Cross-Document Consistency](#cross-document-consistency).
+3. **Authentication homed under Supporting Flows.** Auth and account-management screens support no *core* product flow, but the product still requires them. They now trace to **Supporting Flows** (`SF-#`) in `user-flows.md` — a category kept separate from the core coaching flows so the product's focus stays on coaching. The named flows exist; **SF-05 is drafted**, and the SF-01–SF-04 journeys are not yet. See [Cross-Document Consistency](#cross-document-consistency).
 
 Retired IDs (S-09, S-10, S-13, S-16, S-22) are **not reused**.
 
@@ -328,14 +328,14 @@ _Named "Trade Reflection," not "AI Coach": the coach is a capability, the screen
 ## S-21 — Data & Privacy
 
 - **Status:** MVP _(hosts account deletion, which is MVP; data export remains Planned.)_
-- **Supported Flow(s):** SF-05 Delete Account (MVP — supporting flow; journey not yet drafted) · Export User Data (Planned)
+- **Supported Flow(s):** SF-05 Delete Account (MVP — supporting flow, **journey drafted** in `user-flows.md`) · Export User Data (Planned)
 - **Primary Actor:** Authenticated trader
 - **Primary Purpose:** Give the trader control over their own data — delete their account and private data (MVP); export their data (Planned).
 - **Entry Points:** S-08 Dashboard
 - **Exit Points:** → S-08 Dashboard
 - **Required States:** Populated · **Destructive Confirmation** (account deletion; and export when built)
 - **Security & Privacy Notes:** GR-1 · GR-9 (account deletion is destructive, confirmed, and cascades to all private data — trades, executions, screenshots, AI conversations, and stored files per ADR 0006).
-- **Open Questions:** Deletion cascade + backup-reconciliation semantics (architecture → Transaction Boundaries; ADR 0006 file deletion). Placement — could alternatively live as a "danger zone" in S-20 Security. Export scope deferred with its Planned flow.
+- **Open Questions:** Owned by `user-flows.md` → SF-05 Open Questions now that the journey is drafted. Still live there: the unresolved deletion and backup-expiry windows, whether deletion is immediate or reversible, and whether MVP deletion without export is acceptable. Placement — could alternatively live as a "danger zone" in S-20 Security — remains this document's call. Export scope deferred with its Planned flow.
 
 ---
 
@@ -401,7 +401,7 @@ Every flow maps to at least one screen; every screen traces back to a flow. The 
 | **F-06** Delete a Trade | S-14 (no dedicated screen) | Destructive Confirmation |
 | **F-07** Reflect on a Trade with the AI Coach | S-17 | — |
 
-**Supporting Flows** _(infrastructure; detailed journeys not yet drafted in `user-flows.md`)_
+**Supporting Flows** _(infrastructure; SF-05 drafted in `user-flows.md`, SF-01–SF-04 not yet)_
 
 | Flow | Screen(s) | Flow-end state |
 |---|---|---|
@@ -437,9 +437,9 @@ _Answers to the review questions, after applying the changes above._
 
 1. **Is the responsibility still crystal clear?** Yes — sharpened. The doc identifies screens supporting approved flows and nothing else; layout, navigation, components, and implementation are explicitly delegated in [Related Documents](#related-documents).
 2. **Is anything drifting toward design-system or user-flows responsibilities?** The remaining risk was `Required States` inventing interaction micro-states (`submitting`, `draft-restored`); the [Standard States](#standard-states) vocabulary pulled those back to product-level conditions. No layout, component, or navigation detail remains.
-3. **Screens that should exist but don't?** None new for the approved flows. The remaining upstream work is drafting the **Supporting Flow** journeys (SF-01…SF-05) that S-02/S-04/S-18/S-20/S-21 already trace to.
+3. **Screens that should exist but don't?** None new for the approved flows. The remaining upstream work is drafting the **Supporting Flow** journeys **SF-01…SF-04** that S-02/S-04/S-18/S-20 already trace to; SF-05 (S-21) is drafted.
 4. **Screens that should be removed as layouts / navigation / states?** Done — S-09, S-10 removed (layout/navigation); S-13, S-16, S-22 reclassified as states.
-5. **Ready to become the authoritative MVP screen inventory?** **Yes, for the MVP scope as it stands.** Every MVP screen traces to an approved flow (core or supporting). S-21 is MVP (hosts account deletion, SF-05); data export remains Planned. S-08's responsibility is intentionally deferred to implementation (candidate parked, ⚠ retained as a known decision). The one remaining upstream task — drafting the SF-01…SF-05 journeys, tracked in `NOTES.local.md` — deepens flow detail but doesn't block the inventory.
+5. **Ready to become the authoritative MVP screen inventory?** **Yes, for the MVP scope as it stands.** Every MVP screen traces to an approved flow (core or supporting). S-21 is MVP (hosts account deletion, SF-05); data export remains Planned. S-08's responsibility is intentionally deferred to implementation (candidate parked, ⚠ retained as a known decision). The one remaining upstream task — drafting the SF-01…SF-04 journeys (SF-05 is done) — deepens flow detail but doesn't block the inventory.
 
 ---
 

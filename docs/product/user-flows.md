@@ -147,9 +147,9 @@ These are named here; each will be expanded with the per-flow template when its 
 - **SF-02** — Password Recovery
 - **SF-03** — Manage Security & Sessions
 - **SF-04** — Manage Profile
-- **SF-05** — Delete Account _(MVP — promoted from Planned on trust/privacy grounds; account erasure is a responsibility the first build must meet. Export User Data remains Planned.)_
+- **SF-05** — Delete Account _(drafted below. MVP — promoted from Planned on trust/privacy grounds; account erasure is a responsibility the first build must meet. Export User Data remains Planned.)_
 
-_Screens for these exist provisionally in `screen-inventory.md` (S-02, S-04, S-20, S-18, S-21) and trace to these IDs. Detailed journeys are not yet drafted._
+_Screens for these exist provisionally in `screen-inventory.md` (S-02, S-04, S-20, S-18, S-21) and trace to these IDs. **SF-05 is drafted below**; the SF-01–SF-04 journeys are not yet drafted and are written against ADR 0004, whose security requirements bind them._
 
 ---
 
@@ -283,6 +283,130 @@ From an authenticated session in which the trader chooses to log a new trade aga
 
 ---
 
+## SF-05 — Delete Account
+
+> Supporting flow. Drafted first among the SF-# journeys because it is MVP, irreversible, and cascades to every private record the product holds. It is written against ADR 0004 (sessions, re-authentication), ADR 0006 (file deletion), ADR 0009 (ownership chain), and `security-baseline.md` §6.
+
+### Primary Actor
+
+An authenticated trader permanently removing their own account.
+
+### Status
+
+MVP · Supporting flow. **Not fully closeable** — see Open Questions; the deletion and backup-expiry windows are an unresolved architecture decision, and this flow carries that dependency rather than resolving it.
+
+### Applicable Global Rules
+
+- **GR-1** — deletion is authorized server-side against the authenticated identity; a trader can only ever delete their own account.
+- **GR-2** — the trader knows what was removed, what has not yet been removed, and what happens next.
+- **GR-9** — deletion is explicit, confirmed, and requires recent authentication.
+
+_GR-3, GR-4, GR-5, GR-7, GR-8 and GR-10 are not applicable: this flow computes no facts, presents no evidence, and involves no AI. Deletion completes normally when AI is unavailable because the AI plays no part in it._
+
+_**GR-6 is deliberately not claimed**, though the guarantee it was nearly claimed for is essential. "A failed deletion leaves the account fully intact" is an **atomicity** property; GR-6's own words are "draft and in-progress work survives recoverable failures" — preservation of user work. Two things make it the wrong owner here: this flow has no in-progress work to preserve, and its Abandonment & Re-entry section deliberately preserves **nothing** — re-entry restarts, re-authentication included, by design. Claiming GR-6 would give one rule two meanings and put it at odds with this flow's own recovery behaviour. The guarantee is stated instead where it already lives: `architecture.md` → **Transaction Boundaries**, which names "applying account deletion state" among its examples, and which F-03 already relies on with no GR tag ("a partial write never persists"). See Future Enhancement Notes → Rule Candidates for whether destructive atomicity should eventually become a rule of its own._
+
+### User Goal
+
+Permanently remove their account and private data from Edgebook AI, and leave understanding exactly what was deleted, what remains temporarily, for how long, and that nothing further is required of them.
+
+### Emotional Context
+
+People delete accounts for reasons that deserve respect: they are leaving after a difficult run, acting on a privacy concern, or simply done. The flow must be calm, brief, and free of friction beyond what security requires.
+
+It must not ask the trader to justify the decision, offer retention incentives, bury the action, or use ambiguous wording that makes leaving harder than arriving. **The coaching voice is not used to persuade the trader to stay.**
+
+**This is not a stylistic preference, and a future reader should not soften it into one.** `PROJECT_CHARTER.md` → My Commitment states that if the product ever starts optimizing for engagement instead of learning, it has lost its way. Account deletion is the single highest-pressure moment for that failure to appear — it is where the industry reliably deploys dark patterns, and where the commitment either holds or is revealed as decoration. This section is therefore the charter's most important test case written down as an enforceable part of a flow. Weakening it is not a copy change; it is a change to whether the commitment is real.
+
+Honesty is the tone: deletion is permanent, some copies persist briefly in backups, and the trader is told both plainly rather than reassured vaguely.
+
+### Entry Point
+
+From an authenticated session, via S-21 Data & Privacy.
+
+### Preconditions
+
+- The trader is authenticated (GR-1).
+- The trader's authentication is **recent**; a session alone is insufficient for an irreversible action (`security-baseline.md` §3, ADR 0004).
+
+### Primary Path
+
+1. The trader opens Data & Privacy and chooses to delete their account.
+2. Before confirming, the trader is shown plainly:
+   - **what is deleted** — the account, trading accounts, trades, executions, notes, reflections, screenshots and their stored files, strategies, rules, and any AI conversations and generated insights the system holds;
+   - **what is not deleted immediately** — copies persisting in backups, and the window within which they expire;
+   - **what, if anything, is retained deliberately** and why;
+   - **that the action cannot be undone.**
+3. The trader **re-authenticates** (GR-9, ADR 0004).
+4. The trader gives an explicit, unambiguous confirmation — the Destructive Confirmation state. No pre-checked control, no wording that could be mistaken for a lesser action.
+5. The server independently authorizes the request against the authenticated identity and applies deletion across the ownership chain (GR-1, ADR 0009).
+6. All of the trader's sessions are invalidated; they are signed out everywhere (ADR 0004).
+7. The trader receives clear confirmation of what was removed, the backup-expiry timeline, and that no further action is needed (GR-2).
+
+### System Responses
+
+- Deletion is applied **atomically across the ownership chain** — account, trading accounts, trades, executions, notes, reflections, associations, file metadata, and AI conversation records succeed or fail together. A partial deletion never persists. This is the **transaction boundary** (`architecture.md` → Transaction Boundaries, which names "applying account deletion state"), stated as a system property in the same way F-03 states its own — not as a Global Rule.
+- **Stored files are removed with their metadata** (ADR 0006): the object and its PostgreSQL metadata row are deleted together, and any object left behind by a failure is reconciled by the orphan process ADR 0006 requires, not left indefinitely.
+- The deletion is recorded as a **security event** — actor, time, outcome — without retaining the private content that was deleted (`security-baseline.md` §13).
+- Sessions and tokens are revoked server-side, not merely cleared client-side.
+
+### Validation & Failure States
+
+- **A failed deletion is a no-op, not a partial one.** If any part of the cascade fails, the account remains fully intact and usable, and the trader is told plainly that nothing was deleted and may retry. The no-op is the transaction boundary above; the *telling* is GR-2.
+- The server re-verifies ownership; a request naming another trader's account is rejected and logged (GR-1). Client state is never the authority for whose account is being deleted.
+- Deletion requests are rate-limited, and a failed re-authentication does not consume or advance the request.
+- Ambiguous partial success is never reported as success. If reconciliation is still pending, the trader is told what is still in progress rather than given a false completion.
+
+### Abandonment & Re-entry
+
+- Abandoning the flow before the final confirmation changes **nothing**. No pending state is created, and no reminder or nudge follows.
+- Re-entry starts fresh, including re-authentication.
+- If a grace period or reversible deletion state is adopted (see Open Questions), re-entry **during** that window is a distinct journey — recovering an account mid-deletion — and would need its own definition. This flow does not assume one exists.
+
+### Completion State
+
+- The trader's account and private data are removed from active production storage, their files and file metadata are gone together, and their sessions are invalidated.
+- **The flow completes when the trader has clear confirmation of what was removed and what remains temporarily — not at the moment the transaction commits.** Persistence is a system milestone inside the flow; the flow ends with the trader understanding the outcome and knowing nothing further is required.
+- The trader is signed out. Nothing in the product recognizes them afterward.
+- Backup copies expire on the documented schedule without further action by the trader.
+
+_Note for the rule candidate in Future Enhancement Notes: this is a **second observation** of the confirmed-outcome boundary, in a destructive flow rather than a create flow. It is recorded, not promoted — the rule candidate names F-05 and F-06 as its test cases, and GR-2 is not to be strengthened before those are drafted._
+
+### Security & Privacy Notes
+
+- **GR-1** — deletion authorized server-side; the full ownership chain (user → account → trade → execution / screenshot / note) is walked and verified, with RLS as defense in depth (ADR 0009).
+- **GR-9** — recent authentication plus explicit confirmation. An irreversible action is never reachable by a single stray interaction.
+- **Session invalidation** is part of deletion, not a side effect of it (ADR 0004).
+- **Files** are deleted with their metadata and never left as orphaned private objects (ADR 0006).
+- **Highly sensitive data** — journal entries and AI coaching conversations are classified Highly Sensitive (`security-baseline.md` §1); their deletion follows the same documented retention rules and is verified at the release gate (`release-checklist.md`).
+- **Logging** records that a deletion occurred, never what was deleted.
+- **Backups** — deleted records expire from backups within the documented window, and restoration reapplies deletions (`security-baseline.md` §6). This is a promise the flow makes to the trader and must be verifiable, not assumed.
+
+### Success Metric
+
+- **Completeness:** no record, file, or metadata row belonging to a deleted account survives in active production; verified by automated post-deletion checks rather than inspection.
+- **No partial deletions:** 100% of deletion attempts either complete fully or leave the account entirely intact.
+- **No orphans:** stored objects and metadata rows reach zero drift after deletion and reconciliation.
+- **Comprehension:** the trader can state, from the confirmation alone, what was deleted and when backups expire.
+- **Timeliness:** active-production deletion completes within the documented window, and backup expiry within its own.
+
+### Open Questions
+
+**Architecture Dependencies**
+
+- **Account-deletion and backup-expiry windows are unresolved** (`architecture.md` → Open Questions). The flow's promises in Completion State and Success Metric are stated in terms of "the documented window" precisely because the number does not exist yet. **This flow cannot be fully closed until it is answered.**
+- **Immediate hard delete, or a reversible deletion state?** `architecture.md` → Transaction Boundaries refers to "applying account deletion state," which implies a state may exist. If it does, the grace period, what the trader can see during it, and recovery-during-grace all need defining — and the Abandonment & Re-entry section above changes.
+
+**Product Decisions**
+
+- **Export before delete is unavailable in MVP.** Data export is Planned post-MVP while deletion is MVP, so a trader leaving during MVP cannot take their trading history with them first. Is that acceptable for the first build, or does deletion require a minimal export to be honest about "your data is yours"?
+
+  _Interaction worth deciding consciously, not resolved here:_ this sits in slight tension with the Emotional Context above. The flow commits to "we will not manipulate you into staying" while the MVP simultaneously means "we cannot yet let you leave with your data." Both are honest individually; a departing trader may experience the combination as mixed. One resolution consistent with the charter — rather than in tension with it — is for MVP deletion to say plainly that export does not exist yet and why, instead of leaving the trader to notice the gap themselves. That is a product decision, not a flow decision.
+- **What is deliberately retained after deletion**, if anything — security-event logs, legal or financial records — and is it disclosed to the trader at confirmation?
+- **Is deletion confirmed by email?** If so, the message must not become an account-enumeration signal or a hijack vector, and its content must not restate private data.
+- **Screen placement** — S-21 Data & Privacy, or a "danger zone" within S-20 Security. Owned by `screen-inventory.md`; noted here because it changes the Entry Point.
+
+---
+
 ## Future Enhancement Notes
 
 _Intentionally deferred ideas. These are **not** part of any flow yet and should be revisited before the flow template is finalized for wider use. Capturing them here so they are not lost._
@@ -320,6 +444,11 @@ Deferred rule ideas observed in a single flow, not yet general enough to become 
 
 - Pressure-test this principle when drafting **F-05 — Edit a Trade** and **F-06 — Delete a Trade**.
 - If it holds across both, promote it — either into GR-2 or as its own Global Rule.
+
+**Destructive atomicity.** Evaluate whether "a destructive operation either completes fully or changes nothing" deserves a Global Rule of its own. Today it is a system property owned by `architecture.md` → Transaction Boundaries, stated without a GR tag in both F-03 ("a partial write never persists") and SF-05 ("a failed deletion is a no-op").
+
+- SF-05 nearly claimed **GR-6** for it. That was wrong twice over: GR-6 owns preservation of in-progress *work*, not atomicity, and SF-05 deliberately preserves nothing across abandonment. The near-miss is recorded because the pull toward the nearest available rule will recur.
+- Pressure-test when drafting **F-06 — Delete a Trade**. If a destructive flow needs a *testable flow-level* constraint that Transaction Boundaries does not give it, that is the argument for a rule. If architecture's ownership proves sufficient, leave it there — an existing owner beats a new rule.
 
 **Do not strengthen GR-2 yet.** GR-2's current responsibility is already clear and self-contained:
 
