@@ -557,6 +557,18 @@ This would make cross-flow impact traceable (e.g. which flows touch a Trade) wit
 
 Deferred rule ideas observed in a single flow, not yet general enough to become Global Rules.
 
+**Accessibility as a Global Rule — deliberately deferred, not overlooked.** Accessibility is a founding Product Principle in `PROJECT_CHARTER.md` ("Accessibility by default") and appears in Flow Principles above, yet there is no GR for it. **That absence is a decision, recorded here so it is not repeatedly re-raised as an oversight** — which is exactly what happened in the 2026-07-31 handbook audit.
+
+The reasoning, as of 2026-08-01:
+
+- The gap the audit found was a missing **enforcement layer**, not a missing rule. The bar already existed in `design-system.md` → Accessibility Standards; what was absent was anything that could fail a build.
+- It was closed by adding an **accessibility test layer** to `architecture.md` → Testing Strategy, with its checks named individually, and by aligning both Definitions of Done on "satisfied." A GR would now duplicate an owner that already exists rather than add enforcement.
+- Adding GR-11 pre-implementation would also be the theoretical refinement this document's freeze explicitly forbids.
+
+**What would justify promotion:** a real flow needing a *flow-level, per-journey* accessibility constraint that the design system's bar and the architecture's test layer together cannot express — for example, a journey whose accessible path differs from its visual path, so that "the flow must work" and "the components are accessible" come apart. Until a drafted flow demonstrates that, the existing owners are sufficient.
+
+**One inconsistency this leaves, to resolve from implementation experience rather than now:** Flow Principles above states that its principles are "not individually testable," and lists "support accessibility" among them. Accessibility *is* individually testable — that is what the new test layer proves. The classification is inherited from before the layer existed. Revisit it when this document is next unfrozen, not before.
+
 **Confirmed-outcome boundary.** Evaluate whether all create, edit, and destructive flows should end only after the user can clearly confirm the result — not merely after persistence succeeds. First observed in F-03, whose flow-end is confirmed capture rather than the persistence event.
 
 - Pressure-test this principle when drafting **F-05 — Edit a Trade** and **F-06 — Delete a Trade**.
