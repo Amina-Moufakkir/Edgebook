@@ -1,7 +1,7 @@
 # 0004 — Authentication Strategy
 
-- **Status:** Draft — proposed, not approved. Documents the decision; do not implement until reviewed and approved.
-- **Date:** 2026-07-11
+- **Status:** Accepted — approved 2026-08-01. Implementation may proceed against this record. Its security requirements are binding on the SF-01–SF-04 flows, which are drafted against this record rather than ahead of it.
+- **Date:** 2026-07-11 (drafted) · 2026-08-01 (accepted)
 - **Deciders:** Founder
 - **Related:** [0008 Supabase Integrated Infrastructure], [0009 Row-Level Security Strategy], [0006 Private Object Storage Strategy]
 

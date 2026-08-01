@@ -1217,10 +1217,7 @@ Architecture decisions should exist in documentation before they become deeply e
 
 The following decisions require further evaluation:
 
-- Should row-level security be used in the first release?
-- Which authentication provider should be used?
 - Which ORM or database-access approach should be used?
-- Which object-storage provider should be used?
 - Which AI provider and model strategy should be used?
 - Should AI conversations be stored by default?
 - Which data fields require field-level encryption?

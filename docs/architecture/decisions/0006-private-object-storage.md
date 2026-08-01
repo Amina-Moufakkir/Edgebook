@@ -1,7 +1,7 @@
 # 0006 — Private Object Storage Strategy
 
-- **Status:** Draft — proposed, not approved. Documents the decision; do not implement until reviewed and approved.
-- **Date:** 2026-07-11
+- **Status:** Accepted — approved 2026-08-01. **Upload implementation is gated:** the dedicated file-upload threat model required below (Security Implications) is the entry gate on the upload work item, scheduled as Phase 1b in `implementation-roadmap.md`. No upload code begins before it exists.
+- **Date:** 2026-07-11 (drafted) · 2026-08-01 (accepted)
 - **Deciders:** Founder
 - **Related:** [0008 Supabase Integrated Infrastructure], [0004 Authentication Strategy], [0009 Row-Level Security Strategy]
 

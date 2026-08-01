@@ -1,7 +1,7 @@
 # 0008 — Supabase as Integrated Infrastructure
 
-- **Status:** Draft — proposed, not approved. Documents the decision; do not initialize or implement until reviewed and approved.
-- **Date:** 2026-07-11
+- **Status:** Accepted — approved 2026-08-01. Initialization and implementation may proceed against this record.
+- **Date:** 2026-07-11 (drafted) · 2026-08-01 (accepted)
 - **Deciders:** Founder
 - **Related:** [0004 Authentication Strategy], [0006 Private Object Storage Strategy], [0009 Row-Level Security Strategy]
 
@@ -11,7 +11,7 @@
 
 ## Context
 
-Edgebook AI is a modular monolith operated by a single founder. It handles private, security-sensitive data — trades, journal entries, screenshots, AI conversations — and must enforce strict per-user isolation from day one.
+Edgebook AI is a modular monolith operated by a single founder. It handles private, security-sensitive data — trades, journal entries, screenshots, AI conversations _(if stored — see `architecture.md` Open Questions; this record does not decide it)_ — and must enforce strict per-user isolation from day one.
 
 The early product needs four foundational capabilities:
 

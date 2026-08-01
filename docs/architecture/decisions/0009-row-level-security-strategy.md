@@ -1,7 +1,7 @@
 # 0009 — Row-Level Security Strategy
 
-- **Status:** Draft — proposed, not approved. Documents the decision; do not implement until reviewed and approved.
-- **Date:** 2026-07-11
+- **Status:** Accepted — approved 2026-08-01. Implementation may proceed against this record.
+- **Date:** 2026-07-11 (drafted) · 2026-08-01 (accepted)
 - **Deciders:** Founder
 - **Related:** [0008 Supabase Integrated Infrastructure], [0004 Authentication Strategy], [0006 Private Object Storage Strategy]
 
@@ -11,7 +11,7 @@
 
 ## Context
 
-Edgebook AI stores private, security-sensitive data — trades, executions, journal entries, screenshots, reviews, and AI conversations. Every one of these records belongs to a single user, and the product's credibility depends on the guarantee that no user can ever see another user's data.
+Edgebook AI stores private, security-sensitive data — trades, executions, journal entries, screenshots, reviews, and AI conversations _(if stored — see `architecture.md` Open Questions; this record does not decide it)_. Every one of these records belongs to a single user, and the product's credibility depends on the guarantee that no user can ever see another user's data.
 
 That guarantee cannot rest on a single layer of code. Application authorization is where isolation is *intended* to happen, but application code is also where mistakes happen: a forgotten `where user_id = …`, a new endpoint that skips a shared guard, a background job that trusts its payload, a refactor that quietly widens a query. In a financial, privacy-sensitive product operated by a solo founder, one such mistake is a cross-user data leak.
 
